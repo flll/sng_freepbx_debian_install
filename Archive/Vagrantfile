@@ -1,0 +1,25 @@
+Vagrant.configure("2") do |config|
+    config.vm.box = "debian/bookworm64"
+    
+    # ネットワーク設定
+    config.vm.network "private_network", type: "dhcp"
+    
+    # VirtualBox設定
+    config.vm.provider "virtualbox" do |vb|
+      vb.memory = "2048"
+      vb.cpus = 2
+    end
+  
+    # ディレクトリ同期
+    config.vm.synced_folder "./data", "/var/lib/asterisk"
+    config.vm.synced_folder "./config", "/etc/asterisk"
+    
+    # スクリプトファイルの同期
+    config.vm.provision "file", source: "./shutoku.sh", destination: "/tmp/shutoku.sh"
+    config.vm.provision "file", source: "./sng_freepbx_debian_install.sh", destination: "/tmp/sng_freepbx_debian_install.sh"
+    
+    # Ansibleによるプロビジョニング
+    config.vm.provision "ansible" do |ansible|
+      ansible.playbook = "playbook.yml"
+    end
+  end

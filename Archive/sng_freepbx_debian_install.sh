@@ -1,9 +1,9 @@
 #!/bin/bash
 #####################################################################################
 # * Copyright 2024 by Sangoma Technologies
-# このプログラムはフリーソフトウェアです。あなたはこれを、フリーソフトウェア財団によって
-# 発行されたGNU一般公衆利用許諾契約書(バージョン3か、それ以降のバージョンのうちどれか)
-# が定める条件の下で再頒布または改変することができます。
+# このプログラムはフリーソフトウェアです。あなたはこれを、フリーソフトウェア財団によって発行された
+# GNU一般公衆利用許諾契約書(バージョン3か、それ以降のバージョンのうちどれか)が定める条件の下で
+# 再頒布または改変することができます。
 #
 # このプログラムは有用であることを願って頒布されますが、*全くの無保証* です。
 # 商業可能性の保証や特定の目的への適合性は、言外に示されたものも含め全く存在しません。
@@ -11,24 +11,20 @@
 #
 # @author kgupta@sangoma.com
 #
-# このFreePBXインストールスクリプトとすべての概念は
-# Sangoma Technologiesの所有物です。
-# このインストールスクリプトはFreePBXと依存パッケージのインストールのために
-# 自由に使用できますが、性能に関する保証はなく、
-# 自己責任で使用してください。このスクリプトには保証はありません。
-
-## 追記(flll):
-# freepbx17のインストールスクリプト
-# `/tmp/sng_freepbx_debian_install.sh` 
-# - 新バージョンをスキップ: --skipversion 日本語訳してるのでコレをつける
-# - -dahdiをインストール: --dahdi
-# - テストリポジトリ: --testing
-# - chronyを無効化: --nochrony コンテナでのみコレをつける
-#sudo bash /tmp/sng_freepbx_debian_install.sh --skipversion --dahdi
-
+# このFreePBXインストールスクリプトとすべての概念はSangoma Technologiesの所有物です。
+# このインストールスクリプトは、FreePBXと依存パッケージのインストールにのみ
+# 自由に使用できますが、性能に関する保証はなく、自己責任で使用してください。
+# このスクリプトには保証はありません。
+## 追記:
+# このスクリプトは
+# https://github.com/FreePBX/sng_freepbx_debian_install/blob/25ee336fc38b3d3a4142a39a09824086158f71c6/sng_freepbx_debian_install.sh
+# を日本語に翻訳したものです。(2024/10/28) (commit: 25ee336fc38b3d3a4142a39a09824086158f71c6)
+## 変更点
+# - Edited: で検索してください
 #####################################################################################
 #                                               FreePBX 17                          #
 #####################################################################################
+
 set -e
 SCRIPTVER="1.14"
 ASTVERSION=21
@@ -46,6 +42,7 @@ if [[ $EUID -ne 0 ]]; then
    exit 1
 fi
 
+
 # スクリプト実行のための適切なPATHを設定
 export PATH=$SANE_PATH
 
@@ -53,50 +50,50 @@ while [[ $# -gt 0 ]]; do
 	case $1 in
 		--testing)
 			testrepo=true
-			shift # 引数をスキップ
+			shift
 			;;
 		--nofreepbx)
 			nofpbx=true
-			shift # 引数をスキップ
+			shift
 			;;
 		--noasterisk)
 			noast=true
-			shift # 引数をスキップ
+			shift
 			;;
 		--opensourceonly)
 			opensourceonly=true
-			shift # 引数をスキップ
+			shift
 			;;
 		--noaac)
 			noaac=true
-			shift # 引数をスキップ
+			shift
 			;;
 		--skipversion)
 			skipversion=true
-			shift # 引数をスキップ
+			shift
 			;;
 		--dahdi)
 			dahdi=true
-			shift # 引数をスキップ
+			shift
 			;;
 		--dahdi-only)
 			nofpbx=true
 			noast=true
 			noaac=true
 			dahdi=true
-			shift # 引数をスキップ
+			shift
 			;;
 		--nochrony)
 			nochrony=true
-			shift # 引数をスキップ
+			shift
 			;;
 		--debianmirror)
 			DEBIAN_MIRROR=$2
-			shift; shift # 引数をスキップ
+			shift; shift
 			;;
     --npmmirror)
       NPM_MIRROR=$2
-      shift; shift # 引数をスキップ
+      shift; shift
       ;;
 		-*)
 			echo "不明なオプション $1"
@@ -116,7 +113,7 @@ touch "${LOG_FILE}"
 # 標準エラー出力をログファイルにリダイレクト
 exec 2>>"${LOG_FILE}"
 
-#バージョンの比較
+#バージョン比較
 compare_version() {
         if dpkg --compare-versions "$1" "gt" "$2"; then
                 result=0
@@ -142,21 +139,21 @@ check_version() {
 
     case $result in
             0)
-                echo "インストールスクリプトのバージョン($SCRIPTVER)がGitHub上の最新バージョン($latest_version)より新しいです。GitHubにある版のダウンロードを推奨します。"
+                echo "インストールスクリプトのバージョン($SCRIPTVER)がGitHubの最新バージョン($latest_version)より新しいです。GitHubにあるバージョンをダウンロードすることをお勧めします。"
                 echo "バージョンチェックをスキップするには '$0 --skipversion' を使用してください"
                 exit 1
             ;;
 
             1)
-                echo "GitHubに新しいバージョン($latest_version)のインストールスクリプトが公開されています。更新するか、GitHubから最新版を使用することを推奨します。"
-                echo "バージョンチェックをスキップするには '$0 --skipversion' を使用してください"
+                echo "GitHubに新しいバージョン($latest_version)のインストールスクリプトがあります。更新するか、GitHubから最新のものを使用することをお勧めします。"
+                echo "バージョンチェックをスキップするには '$0 --skipversion' を使用してください。"
                 exit 0
             ;;
 
             2)
                 local_checksum=$(sha256sum "$0" | awk '{print $1}')
                 if [[ "$latest_checksum" != "$local_checksum" ]]; then
-                        echo "ローカルのインストールスクリプトとGitHub上の最新スクリプトに変更が検出されました。GitHubにある最新のインストールスクリプトの使用を推奨します。"
+                        echo "ローカルのインストールスクリプトとGitHubの最新インストールスクリプトの間に変更が検出されました。GitHubにある最新のインストールスクリプトを使用することをお勧めします。"
                         echo "バージョンチェックをスキップするには '$0 --skipversion' を使用してください"
                         exit 0
                 else
@@ -176,28 +173,28 @@ message() {
 	log "$*"
 }
 
-#現在のステップを記録して表示する関数
+#現在のステップを記録し表示する関数
 setCurrentStep () {
 	currentStep="$1"
 	message "${currentStep}"
 }
 
-# インストールのクリーンアップを行う関数
+# インストールをクリーンアップする関数
 terminate() {
 	# pidファイルの削除
 	message "スクリプトを終了します"
 	rm -f "$pidfile"
 }
 
-#エラーと場所を記録する関数
+#エラーとその場所をログに記録する関数
 errorHandler() {
-	log "****** インストール失敗 *****"
-	message "ステップ ${currentStep} でインストールが失敗しました。詳細は ${LOG_FILE} を確認してください。"
+	log "****** インストールに失敗しました *****"
+	message "ステップ ${currentStep} でインストールに失敗しました。詳細は ${LOG_FILE} を確認してください。"
 	message "エラー発生行: $1 終了コード $2 (最後のコマンド: $3)"
 	exit "$2"
 }
 
-# パッケージがインストール済みかどうかを確認
+# パッケージがすでにインストールされているかどうかを確認する
 isinstalled() {
 	PKG_OK=$(dpkg-query -W --showformat='${Status}\n' "$@" 2>/dev/null|grep "install ok installed")
 	if [ "" = "$PKG_OK" ]; then
@@ -212,15 +209,15 @@ pkg_install() {
 	log "############################### "
 	PKG=$@
 	if isinstalled $PKG; then
-		log "$PKG は既にインストールされています...."
+		log "$PKG はすでに存在します ...."
 	else
-		message "$PKG をインストールしています...."
+		message "$PKG をインストールしています ...."
 		apt-get -y --ignore-missing -o DPkg::Options::="--force-confnew" -o Dpkg::Options::="--force-overwrite" install $PKG >> $log
 		if isinstalled $PKG; then
-			message "$PKG のインストールに成功しました...."
+			message "$PKG のインストールに成功しました ...."
 		else
-			message "$PKG のインストールに失敗しました...."
-			message "依存パッケージ $PKG のインストールに失敗したため、インストールプロセスを終了します...."
+			message "$PKG のインストールに失敗しました ...."
+			message "依存パッケージ $PKG のインストールに失敗したため、インストールプロセスを終了します ...."
 			terminate
 		fi
 	fi
@@ -261,7 +258,7 @@ install_asterisk() {
 
 	pkg_install asterisk$astver.0-freepbx-asterisk-modules
 	pkg_install asterisk-version-switch
-	pkg_install asterisk-sounds-*
+	# pkg_install asterisk-sounds-* # **Edited: コメントアウト**
 }
 
 setup_repositories() {
@@ -269,7 +266,7 @@ setup_repositories() {
 
 	wget -O - http://deb.freepbx.org/gpg/aptly-pubkey.asc | gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/freepbx.gpg  >> "$log"
 
-	# デフォルトのリポジトリサーバーを設定
+	# デフォルトのリポジトリサーバーの設定
 	if [ $testrepo ] ; then
 		add-apt-repository -y -S "deb [ arch=amd64 ] http://deb.freepbx.org/freepbx17-dev bookworm main" >> "$log"
 		add-apt-repository -y -S "deb [ arch=amd64 ] http://deb.freepbx.org/freepbx17-dev bookworm main" >> "$log"
@@ -299,14 +296,14 @@ EOF
     fi
 }
 
-#aptコマンド実行後のスクリプトを作成して全てのaptコマンドが完了したことを確認
+#aptコマンド実行後に実行するスクリプトを作成
 create_post_apt_script() {
     #post-apt-runスクリプトの確認
     if [ -e "/usr/bin/post-apt-run" ]; then
         rm -f /usr/bin/post-apt-run
     fi
 
-    message "全てのaptコマンド実行後に実行するスクリプトを作成しています"
+    message "すべてのaptコマンド実行後に実行するスクリプトを作成しています"
     {
         echo "#!/bin/bash"
         echo ""
@@ -324,30 +321,30 @@ create_post_apt_script() {
         echo "        fi"
         echo ""
         echo "        kernel_ver=\$(echo \$kernel | sed -n -e 's/vmlinuz-\([[:digit:].-]*\).*/\\1/' -e 's/-$//p')"
-        echo "        logger \"カーネルイメージ \$kernel_ver のdahdiとwanpipeのカーネルモジュールを確認中\""
+        echo "        logger \"カーネルイメージ \$kernel_ver のdahdiとwanpipeのカーネルモジュールを確認しています\""
         echo ""
-        echo "        #対応するカーネルバージョンのdahdiがインストールされているか確認"
+        echo "        #対応するカーネルバージョンのdahdiがインストールされているかどうかを確認"
         echo "        dahdi_kmod_pres=\$(dpkg -l | grep dahdi-linux-kmod | grep \$kernel_ver | wc -l)"
         echo "        wanpipe_kmod_pres=\$(dpkg -l | grep kmod-wanpipe | grep \$kernel_ver | wc -l)"
         echo ""
         echo "        if [[ \$dahdi_kmod_pres -eq 0 ]] && [[ \$wanpipe_kmod_pres -eq 0 ]]; then"
-        echo "            logger \"dahdi-linux-kmod-\$kernel_ver と kmod-wanpipe-\$kernel_ver をアップグレード中\""
-        echo "            echo \"aptコマンドの実行完了後、dahdi-linux-kmod-\$kernel_ver kmod-wanpipe-\$kernel_ver の更新のため約2分お待ちください\""
+        echo "            logger \"dahdi-linux-kmod-\$kernel_ver と kmod-wanpipe-\$kernel_ver をアップグレードしています\""
+        echo "            echo \"aptコマンドの実行が完了してから約2分お待ちください。dahdi-linux-kmod-\$kernel_ver kmod-wanpipe-\$kernel_ver の更新が進行中です\""
         echo "            apt -y upgrade dahdi-linux-kmod-\$kernel_ver kmod-wanpipe-\$kernel_ver > /dev/null 2>&1 | at now +1 minute&"
         echo "        elif [[ \$dahdi_kmod_pres -eq 0 ]]; then"
-        echo "            logger \"dahdi-linux-kmod-\$kernel_ver をアップグレード中\""
-        echo "            echo \"aptコマンドの実行完了後、dahdi-linux-kmod-\$kernel_ver の更新のため約2分お待ちください\""
+        echo "            logger \"dahdi-linux-kmod-\$kernel_ver をアップグレードしています\""
+        echo "            echo \"aptコマンドの実行が完了してから約2分お待ちください。dahdi-linux-kmod-\$kernel_ver の更新が進行中です\""
         echo "            apt -y upgrade dahdi-linux-kmod-\$kernel_ver > /dev/null 2>&1 | at now +1 minute&"
         echo "        elif [[ \$wanpipe_kmod_pres -eq 0 ]];then"
-        echo "            logger \"kmod-wanpipe-\$kernel_ver をアップグレード中\""
-        echo "            echo \"aptコマンドの実行完了後、kmod-wanpipe-\$kernel_ver の更新のため約2分お待ちください\""
+        echo "            logger \"kmod-wanpipe-\$kernel_ver をアップグレードしています\""
+        echo "            echo \"aptコマンドの実行が完了してから約2分お待ちください。kmod-wanpipe-\$kernel_ver の更新が進行中です\""
         echo "            apt -y upgrade kmod-wanpipe-\$kernel_ver > /dev/null 2>&1 | at now +1 minute&"
         echo "        fi"
         echo ""
         echo "        break"
         echo "    done"
         echo "else"
-        echo "    logger \"Dahdi / wanpipeが存在しないため、dahdi / wanpipe kmodのアップグレードは確認しません\""
+        echo "    logger \"Dahdi / wanpipeが存在しないため、dahdi / wanpipe kmodのアップグレードを確認しません\""
         echo "fi"
         echo ""
         echo "if [ -e "/var/www/html/index.html" ]; then"
@@ -379,7 +376,7 @@ check_kernel_compatibility() {
     fi
 
     if dpkg --compare-versions "$curr_kernel_version" "gt" "$supported_kernel_version"; then
-        message "検出されたカーネルバージョン $curr_kernel_version は freepbx dahdi モジュール $supported_kernel_version でサポートされていないため、freepbxのインストールを中止します"
+        message "検出されたカーネルバージョン $curr_kernel_version は freepbx dahdi モジュール $supported_kernel_version でサポートされていないため、freepbx のインストールを中止します"
 	exit
     fi
 
@@ -388,11 +385,11 @@ check_kernel_compatibility() {
     fi
 
     if [ $testrepo ]; then
-        message "テストリポジトリではカーネルチェックは不要なため、スキップします....."
+        message "カーネルチェックをスキップします。テストリポジトリではカーネルチェックは不要です....."
         return
     fi
 
-    message "カーネルチェックスクリプトを作成して適切なカーネルアップグレードを可能にします"
+    message "適切なカーネルアップグレードを許可するためのカーネルチェックスクリプトを作成しています"
     {
         echo "#!/bin/bash"
         echo ""
@@ -417,12 +414,12 @@ check_kernel_compatibility() {
         echo "    local kernel_packages=\$(apt-mark showhold | grep -E ^linux-image-[0-9] | awk '{print \$1}')"
         echo ""
         echo "    if [[ \"w\$1\" != \"w\" ]]; then"
-        echo "        # 現在サポートされているカーネルバージョンとの比較"
+        echo "        # バージョンを現在サポートされているカーネルバージョンと比較"
         echo "        if dpkg --compare-versions \"\$1\" \"le\" \"\$supported_kernel_version\"; then"
         echo "            local is_on_hold=\$(apt-mark showhold | grep -E ^linux-image-[0-9] | awk '{print \$1}' | grep -w \"\$1\" | wc -l )"
         echo ""
         echo "            if [[ \$is_on_hold -gt 0 ]]; then"
-        echo "                logger \"自動更新を許可するためにカーネルバージョン \$version のホールドを解除します\""
+        echo "                logger \"自動更新を許可するためにカーネルバージョン \$version のホールドを解除します。\""
         echo "                apt-mark unhold \"\$version\" >> /dev/null 2>&1"
         echo "            fi"
         echo "        fi"
@@ -433,9 +430,9 @@ check_kernel_compatibility() {
         echo "        # パッケージ名からバージョンを抽出"
         echo "        local version=\$(echo \"\$package\" | awk -F'-' '{print \$3,-\$4}' | sed 's/[[:space:]]//g' | sort -n)"
         echo ""
-        echo "        # 現在サポートされているカーネルバージョンとの比較"
+        echo "        # バージョンを現在サポートされているカーネルバージョンと比較"
         echo "        if dpkg --compare-versions \"\$version\" \"le\" \"\$supported_kernel_version\"; then"
-        echo "            logger \"自動更新を許可するためにカーネルバージョン \$version のホールドを解除します\""
+        echo "            logger \"自動更新を許可するためにカーネルバージョン \$version のホールドを解除します。\""
         echo "            apt-mark unhold \"\$version\" >> /dev/null 2>&1"
         echo "        fi"
         echo "    done"
@@ -444,7 +441,7 @@ check_kernel_compatibility() {
         echo ""
         echo "check_and_block_kernel() {"
         echo "    if dpkg --compare-versions \"\$curr_kernel_version\" \"gt\" \"\$supported_kernel_version\"; then"
-        echo "        logger \"検出されたカーネルバージョンはfreepbx dahdiモジュールでサポートされていないため中止します\""
+        echo "        logger \"検出されたカーネルバージョンは freepbx dahdi モジュールでサポートされていないため中止します\""
         echo "    fi"
         echo ""
 
@@ -454,9 +451,9 @@ check_kernel_compatibility() {
         echo "        local version=\$(echo \"\$package\" | awk -F'-' '{print \$3,-\$4}' | sed 's/[[:space:]]//g' | sort -n)"
         echo ""
 
-        echo "        # 現在サポートされているカーネルバージョンとの比較"
+        echo "        # バージョンを現在サポートされているカーネルバージョンと比較"
         echo "        if dpkg --compare-versions \"\$version\" \"gt\" \"\$supported_kernel_version\"; then"
-        echo "            logger \"自動更新を防ぐためにカーネルバージョン \$version をホールドします\""
+        echo "            logger \"自動更新を防ぐためにカーネルバージョン \$version をホールドします。\""
         echo "            apt-mark hold \"\$version\" >> /dev/null 2>&1"
         echo "        else"
         echo "            check_and_unblock_kernel \$version"
@@ -475,7 +472,7 @@ check_kernel_compatibility() {
         echo "        ;;"
         echo ""
         echo "    *)"
-        echo "        logger \"不明または無効なオプション \$1\""
+        echo "        logger \"不明 / 無効なオプション \$1\""
         echo "        exit 1"
         echo "        ;;"
         echo "esac"
@@ -489,10 +486,10 @@ check_kernel_compatibility() {
         echo "fi"
     } >> /usr/bin/kernel-check
 
-    #スクリプト実行のためのファイル権限変更
+    #スクリプトを実行するためにファイルのパーミッションを変更
     chmod 755 /usr/bin/kernel-check
 
-    #カーネルチェックを実行するためのPost Invokeの追加
+    #カーネルチェックを実行するためにアップデート後の呼び出しを追加
     if [ -e "/etc/apt/apt.conf.d/05checkkernel" ]; then
         rm -f /etc/apt/apt.conf.d/05checkkernel
     fi
@@ -509,7 +506,7 @@ check_services() {
     for service in "${services[@]}"; do
         service_status=$(systemctl is-active "$service")
         if [[ "$service_status" != "active" ]]; then
-            message "サービス $service が動作していません。サービスが実行中であることを確認してください。"
+            message "サービス $service がアクティブではありません。実行中であることを確認してください。"
         fi
     done
 
@@ -517,12 +514,12 @@ check_services() {
     if [[ "$apache2_status" == "active" ]]; then
         apache_process=$(netstat -anp | awk '$4 ~ /:80$/ {sub(/.*\//,"",$7); print $7}')
         if [ "$apache_process" == "apache2" ]; then
-            message "Apache2サービスはポート80で実行中です。"
+            message "Apache2サービスがポート80で実行中です。"
         else
-            message "Apache2はポート80で実行されていません。"
+            message "Apache2がポート80で実行されていません。"
         fi
     else
-        message "Apache2サービスが動作していません。サービスを有効にしてください"
+        message "Apache2サービスがアクティブではありません。サービスを有効にしてください。"
     fi
 }
 
@@ -531,7 +528,7 @@ check_php_version() {
     if [[ "${php_version:0:3}" == "8.2" ]]; then
         message "インストールされているPHPバージョン $php_version はFreePBXと互換性があります。"
     else
-        message "インストールされているPHPバージョン $php_version はFreePBXと互換性がありません。PHPバージョン'8.2.x'をインストールしてください"
+        message "インストールされているPHPバージョン $php_version はFreePBXと互換性がありません。PHPバージョン'8.2.x'をインストールしてください。"
     fi
 
     # 有効なPHPモジュールがPHP 8.2バージョンであるかチェック
@@ -550,7 +547,7 @@ verify_module_status() {
     if [ -z "$modules_list" ]; then
         message "すべてのモジュールが有効です。"
     else
-        message "有効になっていないモジュールのリスト:"
+        message "有効になっていないモジュールのリスト："
         message "$modules_list"
     fi
 }
@@ -579,9 +576,9 @@ inspect_network_ports() {
         port_set=$(fwconsole sa ports | grep "$service" | cut -d'|' -f 2 | tr -d '[:space:]')
 
         if [ "$port_set" == "$port" ]; then
-            message "$service モジュールはデフォルトのポートに割り当てられています。"
+            message "$serviceモジュールはデフォルトのポートに割り当てられています。"
         else
-            message "$service モジュールは $port_set の代わりにポート $port が割り当てられている必要があります"
+            message "$serviceモジュールは$port_setの代わりにポート$portが割り当てられていることが期待されます。"
         fi
     done
 }
@@ -591,7 +588,7 @@ inspect_running_processes() {
     if [ -z "$processes" ]; then
         message "オフラインのプロセスは見つかりませんでした。"
     else
-        message "オフラインプロセスのリスト:"
+        message "オフラインのプロセスのリスト："
         message "$processes"
     fi
 }
@@ -636,7 +633,7 @@ check_asterisk() {
 	if asterisk -rx "module show" | grep -q "res_digium_phone.so"; then
             check_digium_phones_version
         else
-            message "Digium Phonesモジュールが読み込まれていません。正しくインストールされ読み込まれていることを確認してください。"
+            message "Digium Phonesモジュールがロードされていません。正しくインストールされ、ロードされていることを確認してください。"
         fi
     fi
 }
@@ -648,7 +645,7 @@ hold_packages() {
         packages+=("freepbx17")
     fi
 
-    # 各パッケージをループしてホールド
+    # 各パッケージをループしてホールドする
     for pkg in "${packages[@]}"; do
         apt-mark hold "$pkg" >> "$log"
     done
@@ -660,36 +657,36 @@ kernel=$(uname -a)
 host=$(hostname)
 fqdn="$(hostname -f)" || true
 
-# バージョンチェックに必要なwgetをインストール
+# wgetをインストール（バージョンチェックに必要）
 pkg_install wget
 
-# スクリプトバージョンチェック
+# スクリプトのバージョンチェック
 if [[ $skipversion ]]; then
-    message "バージョンチェックをスキップします..."
+    message "バージョンチェックをスキップしています..."
 else
-    # --skipversionが指定されていない場合はバージョンチェックを実行
-    message "バージョンチェックを実行中..."
+    # --skipversionが提供されていない場合、バージョンチェックを実行
+    message "バージョンチェックを実行しています..."
     check_version
 fi
 
 # コンテナ内で実行されているかチェック
 if systemd-detect-virt --container &> /dev/null; then
-	message "コンテナ内で実行中です。Chronyのインストールをスキップします。"
+	message "コンテナ内で実行されています。Chronyのインストールをスキップします。"
 	nochrony=true
 fi
 
 # 64ビットシステムで実行されているかチェック
 ARCH=$(dpkg --print-architecture)
 if [ "$ARCH" != "amd64" ]; then
-    message "FreePBX 17のインストールは64ビット(amd64)システムでのみ可能です！"
+    message "FreePBX 17のインストールは64ビット（amd64）システムでのみ可能です！"
     message "現在のシステムのアーキテクチャ: $ARCH"
     exit 1
 fi
 
-# hostnameコマンドが成功しFQDNが空でないことを確認
+# hostnameコマンドが成功し、FQDNが空でないことを確認
 if [ -z "$fqdn" ]; then
-    echo "完全修飾ドメイン名(FQDN)が正しく設定されていません。"
-    echo "システムのFQDNを設定してスクリプトを再実行してください。"
+    echo "完全修飾ドメイン名（FQDN）が正しく設定されていません。"
+    echo "このシステムのFQDNを設定し、スクリプトを再実行してください。"
     echo "FQDNを設定するには、/etc/hostnameと/etc/hostsファイルを更新してください。"
     exit 1
 fi
@@ -702,29 +699,29 @@ if [ -f "$pidfile" ]; then
 	log "以前のPIDファイルが見つかりました。"
 	if ps -p "${pid}" > /dev/null
 	then
-		message "FreePBX 17のインストールプロセスが既に実行中です(PID=${pid})。新しいプロセスは開始しません"
+		message "FreePBX 17のインストールプロセスが既に進行中です（PID=${pid}）。新しいプロセスは開始しません。"
 		exit 1;
 	fi
-	log "古いPIDファイルを削除します"
+	log "古いPIDファイルを削除しています"
 	rm -f "${pidfile}"
 fi
 
-setCurrentStep "インストールを開始します。"
+setCurrentStep "インストールを開始しています。"
 trap 'errorHandler "$LINENO" "$?" "$BASH_COMMAND"' ERR
 trap "terminate" EXIT
 echo "${pid}" > $pidfile
 
 start=$(date +%s)
-message "  $host $kernel のFreePBX 17インストールプロセスを開始します"
-message "  プロセスの詳細は $log を参照してください..."
-log "  スクリプトv$SCRIPTVER を実行中..."
+message "  $host $kernelのFreePBX 17インストールプロセスを開始しています"
+message "  プロセスの詳細は$logを参照してください..."
+log "  スクリプトv$SCRIPTVERを実行しています..."
 
-setCurrentStep "インストールが正常であることを確認中"
-# 壊れたインストールの修正
+setCurrentStep "インストールが正常であることを確認しています"
+# 壊れたインストールを修正
 apt-get -y --fix-broken install >> $log
 apt-get autoremove -y >> "$log"
 
-# sources.listファイルにCD-ROMリポジトリが存在するかチェック
+# CD-ROMリポジトリがsources.listファイルに存在するかチェック
 if grep -q "^deb cdrom" /etc/apt/sources.list; then
   # sources.listファイルのCD-ROMリポジトリ行をコメントアウト
   sed -i '/^deb cdrom/s/^/#/' /etc/apt/sources.list
@@ -734,7 +731,7 @@ fi
 apt-get update >> $log
 
 # "iptables-persistent"とpostfixが入力を求めないようにiptablesとpostfixの入力を追加
-setCurrentStep "デフォルト設定を行っています"
+setCurrentStep "デフォルト設定をセットアップしています"
 debconf-set-selections <<EOF
 iptables-persistent iptables-persistent/autosave_v4 boolean true
 iptables-persistent iptables-persistent/autosave_v6 boolean true
@@ -752,14 +749,14 @@ setup_repositories
 lat_dahdi_supp_ver=$(apt-cache search dahdi | grep -E "^dahdi-linux-kmod-[0-9]" | awk '{print $1}' | awk -F'-' '{print $4"-"$5}' | sort -n | tail -1)
 kernel_version=$(uname -r | cut -d'-' -f1-2)
 
-message " カーネル $kernel_version にFreePBX 17をインストールしています。"
-message " DAHDIを使用する予定がある場合は以下の点に注意してください:"
-message " DAHDIオプションを選択してスクリプトにDAHDIを設定させるか"
+message " カーネル$kernel_version に FreePBX 17 をインストールしています。"
+message " DAHDIを使用する予定がある場合は以下の点に注意してください："
+message " DAHDIオプションを選択してスクリプトがDAHDIを設定するようにするか、"
 message "                                  または"
-message " DAHDIがサポートするカーネルを実行していることを確認してください。現在の最新サポートカーネルバージョンは $lat_dahdi_supp_ver です。"
+message " DAHDI がサポートするカーネルを実行していることを確認してください。現在の最新サポートカーネルバージョンは $lat_dahdi_supp_ver です。"
 
 if [ $dahdi ]; then
-    setCurrentStep "適切なカーネルアップグレードとバージョンのインストールのみを許可することを確認しています"
+    setCurrentStep "適切なカーネルアップグレードとバージョンのインストールのみを許可していることを確認しています"
     check_kernel_compatibility "$kernel_version"
 fi
 
@@ -769,14 +766,14 @@ apt-get update >> $log
 # apt-cache policyをログに記録
 apt-cache policy  >> $log
 
-# tftpとchronyデーモンは設定変更が必要なため自動起動しない
-systemctl mask tftpd-hpa.service
+# tftpとchronyデーモンを自動的に起動しないようにする（設定変更が必要なため）
+mv /etc/init.d/tftpd-hpa /etc/init.d/tftpd-hpa.disabled # **Edited: systemctl mask tftpd-hpa.service**
 if [ "$nochrony" != true ]; then
-	systemctl mask chrony.service
+	mv /etc/init.d/chrony /etc/init.d/chrony.disabled # **Edited: systemctl mask chrony.service**
 fi
 
 # 依存パッケージをインストール
-setCurrentStep "Installing required packages"
+setCurrentStep "必要なパッケージをインストールしています"
 DEPPKGS=("redis-server"
 	"libsnmp-dev"
 	"libtonezone-dev"
@@ -832,7 +829,7 @@ DEPPKGS=("redis-server"
 	"php-pear"
 	"curl"
 	"sox"
-	"libncurses5-dev"
+	#"libncurses5-dev"
 	"libssl-dev"
 	"mpg123"
 	"libxml2-dev"
@@ -902,7 +899,7 @@ for i in "${!DEPPKGS[@]}"; do
 done
 
 if  dpkg -l | grep -q 'postfix'; then
-    warning_message="# 警告: inet_interfacesを127.0.0.1以外のIPに変更すると、Postfixが外部ネットワーク接続に公開される可能性があります。\n# このネットワーク設定の意味を理解し、特定のネットワーク要件がある場合のみ変更してください。"
+    warning_message="# 警告: inet_interfacesを127.0.0.1以外のIPに変更すると、Postfixが外部ネットワーク接続に露出する可能性があります。\n# この設定は、影響を理解し、特定のネットワーク要件がある場合にのみ変更してください。"
 
     if ! grep -q "警告: inet_interfacesの変更" /etc/postfix/main.cf; then
         # inet_interfaces設定の上に警告メッセージを追加
@@ -911,20 +908,20 @@ if  dpkg -l | grep -q 'postfix'; then
 
     sed -i "s/^inet_interfaces\s*=.*/inet_interfaces = 127.0.0.1/" /etc/postfix/main.cf
 
-    systemctl restart postfix
+    /etc/init.d/postfix restart # **Edited: systemctl restart postfix**
 fi
 
 # OpenVPN EasyRSAの設定
 if [ ! -d "/etc/openvpn/easyrsa3" ]; then
 	make-cadir /etc/openvpn/easyrsa3
 fi
-#システム管理者が後で生成するため、以下のファイルを削除
+#後でシステム管理者が生成する以下のファイルを削除
 rm -f /etc/openvpn/easyrsa3/pki/vars || true
 rm -f /etc/openvpn/easyrsa3/vars
 
-# --dahdiオプションが指定された場合、Dahdiカードサポートをインストール
+# --dahdiオプションが提供された場合、Dahdiカードサポートをインストール
 if [ "$dahdi" ]; then
-    message "DAHDIカードサポートをインストール中..."
+    message "DAHDIカードサポートをインストールしています..."
     DAHDIPKGS=("asterisk${ASTVERSION}-dahdi"
            "dahdi-firmware"
            "dahdi-linux"
@@ -945,21 +942,21 @@ fi
 
 # libfdk-aac2のインストール
 if [ $noaac ] ; then
-	message "noaacオプションが指定されたため、libfdk-aac2のインストールをスキップします"
+	message "noaacオプションのためlibfdk-aac2のインストールをスキップします"
 else
 	pkg_install libfdk-aac2
 fi
 
-setCurrentStep "不要なパッケージを削除中"
+setCurrentStep "不要なパッケージを削除しています"
 apt-get autoremove -y >> "$log"
 
 execution_time="$(($(date +%s) - start))"
-message "依存パッケージのインストールに要した実行時間: $execution_time 秒"
+message "全ての依存パッケージのインストールに要した実行時間 : $execution_time 秒"
 
 
 
 
-setCurrentStep "フォルダとasterisk設定のセットアップ"
+setCurrentStep "フォルダとasterisk設定をセットアップしています"
 groupExists="$(getent group asterisk || echo '')"
 if [ "${groupExists}" = "" ]; then
 	groupadd -r asterisk
@@ -978,7 +975,7 @@ mkdir -p /tftpboot
 chown -R asterisk:asterisk /tftpboot
 # tftpプロセスのパスをtftpbootに変更
 sed -i -e "s|^TFTP_DIRECTORY=\"/srv\/tftp\"$|TFTP_DIRECTORY=\"/tftpboot\"|" /etc/default/tftpd-hpa
-# IPv6が利用できない場合、正常な実行を可能にするためtftpとchronyのオプションを変更
+# IPv6が利用できない場合、正常な実行を可能にするためにtftpとchronyのオプションを変更
 if [ ! -f /proc/net/if_inet6 ]; then
 	sed -i -e "s|^TFTP_OPTIONS=\"--secure\"$|TFTP_OPTIONS=\"--secure --ipv4\"|" /etc/default/tftpd-hpa
 	if [ "$nochrony" != true ]; then
@@ -986,18 +983,19 @@ if [ ! -f /proc/net/if_inet6 ]; then
 	fi
 fi
 # tftpとchronyデーモンを起動
-systemctl unmask tftpd-hpa.service
-systemctl start tftpd-hpa.service
+mv /etc/init.d/tftpd-hpa.disabled /etc/init.d/tftpd-hpa # **Edited: systemctl unmask tftpd-hpa.service**
+/etc/init.d/tftpd-hpa start # **Edited: systemctl start tftpd-hpa.service**
+
 if [ "$nochrony" != true ]; then
-	systemctl unmask chrony.service
-	systemctl start chrony.service
+	mv /etc/init.d/chrony.disabled /etc/init.d/chrony # **Edited: systemctl unmask chrony.service**
+	/etc/init.d/chrony start # **Edited: systemctl start chrony.service**
 fi
 
 # asterisk音声ディレクトリの作成
 mkdir -p /var/lib/asterisk/sounds
 chown -R asterisk:asterisk /var/lib/asterisk
 
-# katanaと互換性を持たせるためopensslを変更
+# katanaと互換性を持たせるためにopensslを変更
 sed -i -e 's/^openssl_conf = openssl_init$/openssl_conf = default_conf/' /etc/ssl/openssl.cnf
 
 isSSLConfigAdapted=$(grep "FreePBX 17 変更" /etc/ssl/openssl.cnf |wc -l)
@@ -1015,7 +1013,7 @@ CipherString = DEFAULT:@SECLEVEL=1
 EOF
 fi
 
-#IPv4により高い優先順位を設定
+#IPv4により高い優先度を設定
 sed -i 's/^#\s*precedence ::ffff:0:0\/96  100/precedence ::ffff:0:0\/96  100/' /etc/gai.conf
 
 # screen設定
@@ -1030,7 +1028,7 @@ EOF
 fi
 
 
-# マウスでのコピー＆ペースト用VIM設定
+# マウスのコピー＆ペースト用のVIM設定
 isVimRcAdapted=$(grep "FreePBX 17 変更" /etc/vim/vimrc.local |wc -l)
 if [ "0" = "${isVimRcAdapted}" ]; then
 	VIMRUNTIME=$(vim -e -T dumb --cmd 'exe "set t_cm=\<C-M>"|echo $VIMRUNTIME|quit' | tr -d '\015' )
@@ -1038,21 +1036,19 @@ if [ "0" = "${isVimRcAdapted}" ]; then
 
 	cat <<EOF >> /etc/vim/vimrc.local
 " FreePBX 17 変更 - 開始
-" このファイルは最初にvimのデフォルト設定を読み込み、
-" 後で再度読み込まれることを防ぎます。その他のオプションは
-" 追加されるか、デフォルト設定を上書きします。
-" このファイルの最後に必要なだけオプションを追加してください。
+" このファイルは最初にデフォルトのvimオプションを読み込み、後で再度読み込まれるのを防ぎます。
+" その他のオプションはすべて追加されるか、デフォルト設定を上書きします。
+" このファイルの最後に好きなだけオプションを追加してください。
 
-" デフォルト設定の読み込み
+" デフォルトを読み込む
 source $VIMRUNTIME_FOLDER/defaults.vim
 
-" ユーザーにローカルのvimrc（~/.vimrc）がない場合、
-" デフォルト設定が後で再度読み込まれることを防ぐ
+" ユーザーにローカルのvimrc（~/.vimrc）がない場合、デフォルトが後で再度読み込まれるのを防ぐ
 let skip_defaults_vim = 1
 
 
-" その他のオプションを設定（/usr/share/vim/vim80/defaults.vimの設定を上書き）
-" 必要なだけオプションを追加してください
+" より多くのオプションを設定（/usr/share/vim/vim80/defaults.vimの設定を上書き）
+" 好きなだけオプションを追加してください
 
 " マウスモードを'r'に設定
 if has('mouse')
@@ -1063,7 +1059,7 @@ EOF
 fi
 
 
-# 既存の設定を上書きしないようにaptを設定
+# 既存の設定を常に上書きしないようにaptの設定
 cat <<EOF >> /etc/apt/apt.conf.d/00freepbx
 DPkg::options { "--force-confdef"; "--force-confold"; }
 EOF
@@ -1073,16 +1069,16 @@ EOF
 
 # Asteriskのインストール
 if [ $noast ] ; then
-	message "noasteriskオプションが指定されたため、Asteriskのインストールをスキップします"
+	message "noasteriskオプションのためAsteriskのインストールをスキップします"
 else
-	# TODO 既にAsteriskがインストールされている場合、それを削除して新しいものをインストールする必要があります
+	# TODO 既にAsteriskがインストールされている場合、それを削除して新しいものをインストールする必要があります。
 	# Asterisk 21のインストール
-	setCurrentStep "Asteriskパッケージをインストール中"
+	setCurrentStep "Asteriskパッケージをインストールしています。"
 	install_asterisk $ASTVERSION
 fi
 
 # PBX依存パッケージのインストール
-setCurrentStep "FreePBXパッケージをインストール中"
+setCurrentStep "FreePBXパッケージをインストールしています"
 
 FPBXPKGS=("sysadmin17"
 	   "sangoma-pbx17"
@@ -1094,7 +1090,7 @@ done
 
 
 #freepbx.iniファイルの有効化
-setCurrentStep "モジュールを有効化中"
+setCurrentStep "モジュールを有効化しています。"
 phpenmod freepbx
 mkdir -p /var/lib/php/session
 
@@ -1106,27 +1102,27 @@ touch /etc/asterisk/extensions_additional.conf
 touch /etc/asterisk/extensions_custom.conf
 chown -R asterisk:asterisk /etc/asterisk
 
-setCurrentStep "fail2banを再起動中"
-systemctl restart fail2ban  >> $log
+setCurrentStep "fail2banを再起動しています"
+service fail2ban restart  >> $log # **Edited: systemctl restart fail2ban  >> $log**
 
 
 if [ $nofpbx ] ; then
-  message "nofreepbxオプションが指定されたため、FreePBX 17のインストールをスキップします"
+  message "nofreepbxオプションのためFreePBX 17のインストールをスキップします"
 else
-  setCurrentStep "FreePBX 17をインストール中"
+  setCurrentStep "FreePBX 17をインストールしています"
   pkg_install ioncube-loader-82
   pkg_install freepbx17
 
   if [ -n "$NPM_MIRROR" ] ; then
-    setCurrentStep "環境変数npm_config_registry=$NPM_MIRRORを設定中"
+    setCurrentStep "環境変数npm_config_registry=$NPM_MIRRORを設定しています"
     export npm_config_registry="$NPM_MIRROR"
   fi
 
   # オープンソースのみが必要な場合、商用モジュールを削除
   if [ "$opensourceonly" ]; then
-    setCurrentStep "商用モジュールを削除中"
+    setCurrentStep "商用モジュールを削除しています"
     fwconsole ma list | awk '/Commercial/ {print $2}' | xargs -I {} fwconsole ma -f remove {} >> "$log"
-    # 商用sysadminモジュールに依存するため、ファイアウォールモジュールも削除
+    # 商用のsysadminモジュールに依存しているため、ファイアウォールモジュールも削除
     fwconsole ma -f remove firewall >> "$log" || true
   fi
 
@@ -1135,33 +1131,33 @@ else
     echo 'export PERL5LIB=$PERL5LIB:/etc/wanpipe/wancfg_zaptel' | sudo tee -a /root/.bashrc
   fi
 
-  setCurrentStep "すべてのローカルモジュールをインストール中"
+  setCurrentStep "すべてのローカルモジュールをインストールしています"
   fwconsole ma installlocal >> $log
 
-  setCurrentStep "FreePBX 17モジュールをアップグレード中"
+  setCurrentStep "FreePBX 17モジュールをアップグレードしています"
   fwconsole ma upgradeall >> $log
 
-  setCurrentStep "FreePBX 17を再読み込みして再起動中"
+  setCurrentStep "FreePBX 17をリロードして再起動しています"
   fwconsole reload >> $log
   fwconsole restart >> $log
 
   if [ "$opensourceonly" ]; then
-    # sysadmin商用モジュール用のヘルパーパッケージをアンインストール
-    message "sysadmin17をアンインストール中"
+    # sysadmin商用モジュール用のsysadminヘルパーパッケージをアンインストール
+    message "sysadmin17をアンインストールしています"
     apt-get purge -y sysadmin17 >> "$log"
     # 商用モジュールとfreepbx17パッケージのインストールに必要なionCubeローダーをアンインストール
-    message "ioncube-loader-82をアンインストール中"
+    message "ioncube-loader-82をアンインストールしています"
     apt-get purge -y ioncube-loader-82 >> "$log"
   fi
 fi
 
-setCurrentStep "インストールプロセスを完了中"
-systemctl daemon-reload >> "$log"
+setCurrentStep "インストールプロセスを完了しています"
+#systemctl daemon-reload >> "$log" # **Edited: コメントアウト**
 if [ ! $nofpbx ] ; then
-  systemctl enable freepbx >> "$log"
+  #systemctl enable freepbx >> "$log" # **Edited: コメントアウト**
 fi
 
-#apache2のindex.htmlは不要なため削除
+#apache2のindex.htmlを削除（不要なファイルのため）
 rm -f /var/www/html/index.html
 
 #apache mod sslを有効化
@@ -1182,23 +1178,23 @@ fi
 #postfixのサイズを100MBに設定
 postconf -e message_size_limit=102400000
 
-# 攻撃者への情報提供を減らすためexpose_phpを無効化
+# 攻撃者に少ない情報を提供するためにexpose_phpを無効化
 sed -i 's/\(^expose_php = \).*/\1Off/' /etc/php/${PHPVERSION}/apache2/php.ini
 
-# 攻撃者への情報提供を減らすためServerTokensとServerSignatureを無効化
+# 攻撃者に少ない情報を提供するためにServerTokensとServerSignatureを無効化
 sed -i 's/\(^ServerTokens \).*/\1Prod/' /etc/apache2/conf-available/security.conf
 sed -i 's/\(^ServerSignature \).*/\1Off/' /etc/apache2/conf-available/security.conf
 
 # apache2を再起動
-systemctl restart apache2 >> "$log"
+apache2ctl -k restart # **Edited: systemctl restart apache2 >> "$log"**
 
-setCurrentStep "パッケージをホールド中"
+setCurrentStep "パッケージをホールドしています"
 
 hold_packages
 
 # logrotate設定の更新
 if grep -q '^#dateext' /etc/logrotate.conf; then
-   message "logrotate.confを設定中"
+   message "logrotate.confを設定しています"
    sed -i 's/^#dateext/dateext/' /etc/logrotate.conf
 fi
 
@@ -1208,8 +1204,8 @@ chown -R asterisk:asterisk /var/www/html/
 #post aptスクリプトの作成
 create_post_apt_script
 
-# 署名を更新
-setCurrentStep "モジュールの署名を更新中"
+# 署名の更新
+setCurrentStep "モジュールの署名を更新しています。"
 count=1
 if [ ! $nofpbx ]; then
   while [ $count -eq 1 ]; do
@@ -1220,25 +1216,25 @@ if [ ! $nofpbx ]; then
     if [ $exit_status -eq 0 ]; then
       break
     else
-      log "コマンド'fwconsole ma refreshsignatures'の実行が終了ステータス$exit_statusで失敗しました。バックグラウンドジョブとして実行します"
+      log "コマンド'fwconsole ma refreshsignatures'の実行に失敗しました。終了ステータス: $exit_status。バックグラウンドジョブとして実行します"
       refresh_signatures &
-      log "残りのスクリプト実行を継続します"
+      log "残りのスクリプト実行を続行します"
       break
     fi
   done
 fi
 
 
-setCurrentStep "FreePBX 17のインストールが正常に完了しました"
+setCurrentStep "FreePBX 17のインストールが正常に完了しました。"
 
 
 ############ インストール後の検証 ############################################
 # インストール後の検証コマンド
-# スクリプトの途中終了を防ぐため、非ゼロ終了コードでの自動終了を無効化
+# スクリプトの早期終了を防ぐため、非ゼロの終了コードに遭遇した際の自動スクリプト終了を無効化します。
 set +e
 setCurrentStep "インストール後の検証"
 
-check_services
+#check_services # **Edited: コメントアウト**
 
 check_php_version
 

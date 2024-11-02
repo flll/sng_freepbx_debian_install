@@ -1,0 +1,9 @@
+.env
+
+# configフォルダの中身を無視（.gitkeepは除く）
+/config/*
+!/config/.gitkeep
+
+# dataフォルダの中身を無視（.gitkeepは除く）
+/data/*
+!/data/.gitkeep

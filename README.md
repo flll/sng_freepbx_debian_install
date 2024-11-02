@@ -1,61 +1,77 @@
-2024-02-20 Version 1.0 is in BETA and for testing only. Not suitable for production systems.
 
+詳細、ライセンスはフォーク元のREADMEをご覧ください。
+
+## 概要
+
+[FreePBX](http://www.freepbx.org/ "FreePBX ホームページ")は[Asterisk©](http://www.asterisk.org/ "Asterisk ホームページ")(PBX)を制御・管理するオープンソースのGUI(グラフィカルユーザーインターフェース)です。FreePBXはGPLライセンスの下で提供されています。
+
+```sh
+sng_freepbx_debian_install.sh
 ```
- ______             _____  ______   __
-|  ____|           |  __ \|  _ \ \ / /
-| |__ _ __ ___  ___| |__) | |_) \ V /
-|  __| '__/ _ \/ _ \  ___/|  _ < > <
-| |  | | |  __/  __/ |    | |_) / . \
-|_|  |_|  \___|\___|_|    |____/_/ \_\
-Your Open Source Asterisk PBX GUI Solution
-```
+これはFreePBX 17 のインストールスクリプトで、Debian 12.x OS上にFreePBXをインストールするためのものです。
 
-### What?
+[FreePBX](http://www.freepbx.org/ "FreePBX ホームページ")は、PHPとJavascriptで書かれた完全にモジュール化されたAsterisk用のGUIです。これは、お客様が[Asterisk](http://www.asterisk.org/ "Asterisk ホームページ")の有益な機能を活用できるよう、必要なモジュールを簡単に作成し、無料で配布できることを意味します。
 
-[FreePBX](http://www.freepbx.org/ "FreePBX Home Page") is an open source GUI (graphical user interface) that controls and manages [Asterisk©](http://www.asterisk.org/ "Asterisk Home Page") (PBX). FreePBX is licensed under GPL.
+## バージョン関連
 
-This is a FreePBX 17 installation script.
+### マシン
 
-This script is to install FreePBX  on the top of vanilla Debian 12.x OS.
-
-[FreePBX](http://www.freepbx.org/ "FreePBX Home Page") is a completely modular GUI for Asterisk written in PHP and Javascript. Meaning you can easily write any module you can think of and distribute it free of cost to your clients so that they can take advantage of beneficial features in [Asterisk](http://www.asterisk.org/ "Asterisk Home Page")
-
-### Setting up a FreePBX system
-
-[See our WIKI](https://sangomakb.atlassian.net/wiki/spaces/FP/pages/9732130/Install+FreePBX)
-
-### License
-
-[This modules code is licensed as GPLv3+](https://www.gnu.org/licenses/gpl-3.0.txt)
-
-### Contributing
-
-To contribute code or modules back into the [FreePBX](http://www.freepbx.org/ "FreePBX Home Page") ecosystem you must fully read our Code License Agreement. We are not able to look at or accept patches or code of any kind until this document is filled out. To view and sign the contributor license agreement you can visit <https://oss-cla.sangoma.com/freepbx/sng_freepbx_debian_install>. Signing this contributor license agreement once allows you to contribute to all open source projects from Sangoma, including FreePBX. Please take a look at [https://sangomakb.atlassian.net/wiki/spaces/FP/pages/10682663/Code+License+Agreement](https://sangomakb.atlassian.net/wiki/spaces/FP/pages/10682663/Code+License+Agreement) for more information
-
-### Issues
-
-Please file bug reports at <https://github.com/FreePBX/issue-tracker/issues>
-
-### How to execute the script
-
-Steps -
-
-1) ssh to the Debian system as 'root'
-
-2) Download the file using `wget`:
-
-```bash
-wget https://github.com/FreePBX/sng_freepbx_debian_install/raw/master/sng_freepbx_debian_install.sh -O /tmp/sng_freepbx_debian_install.sh
+```yml
+$ hostnamectl
+ Static hostname: debian
+       Icon name: computer-desktop
+         Chassis: desktop 🖥️
+Operating System: Debian GNU/Linux 12 (bookworm) 
+          Kernel: Linux 6.1.0-25-amd64
+    Architecture: x86-64
+ Hardware Vendor: BESSTAR TECH LIMITED
+  Hardware Model: HM80
+Firmware Version: 5.16
 ```
 
-3) Execute the script:
 
-```bash
-bash /tmp/sng_freepbx_debian_install.sh
+このスクリプトは、FreePBXに必要な依存パッケージをインストールした後、FreePBXソフトウェア自体をインストールします。
+
+詳細なインストールログは `/var/log/pbx/freepbx17-install.log` で確認できます。
+
+- [WIKI](https://sangomakb.atlassian.net/wiki/spaces/FP/pages/9732130/Install+FreePBX)
+
+# Debian 12.7 のインストール
+
+- [Preseed-raw](https://raw.githubusercontent.com/flll/sng_freepbx_debian_install/refs/heads/master/debian-preseed.cfg)
+  - ![image](https://github.com/user-attachments/assets/3b51f3d4-516e-47f2-964a-70ba957f6776)
+
+### プロビジョニング
+
+```sh
+# tailscale インストール
+curl -fsSL https://tailscale.com/install.sh | sh ;
+tailscale set --auto-update ;
+sudo tailscale up --accept-risk all --ssh --advertise-routes=10.0.0.0/24 --accept-routes --advertise-exit-node ;
+
+echo 'net.ipv4.ip_forward = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
+echo 'net.ipv6.conf.all.forwarding = 1' | sudo tee -a /etc/sysctl.d/99-tailscale.conf
+sudo sysctl -p /etc/sysctl.d/99-tailscale.conf
+
+
+# サスペンドとハイバネーションを無効化
+sudo systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+# 自動サスペンドを無効化
+gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-type 'nothing'
+gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-type 'nothing'
+sudo nano /etc/systemd/logind.conf
+    # HandleLidSwitch=ignore
+    # HandleLidSwitchExternalPower=ignore
+    # IdleAction=ignore に変更
+sudo systemctl restart systemd-logind
 ```
 
-The script will install the necessary dependencies for FreePBX, followed by the FreePBX software itself.
+### freepbx のインストール
 
-The installation duration may vary depending on your internet bandwidth and system capacity.
-
-You can find detailed installation logs at `/var/log/pbx/freepbx17-install.log`.
+```sh
+git clone https://github.com/flll/sng_freepbx_debian_install
+cd sng_freepbx_debian_install
+bash sng_freepbx_debian_install.sh --skipversion --dahdi
+# freepbx のファイアウォールは有効にしないこと
+# もし開始してしまった場合は`fwconsole firewall stop`で停止できる。
+```

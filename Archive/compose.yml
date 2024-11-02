@@ -1,0 +1,53 @@
+services:
+  freepbx:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: freepbx
+    restart: unless-stopped
+    init: false
+    tty: true
+    stdin_open: true
+    volumes:
+      - type: bind
+        source: ./data
+        target: /var/lib/asterisk
+      - type: bind
+        source: ./config
+        target: /etc/asterisk
+      - type: bind
+        source: ./shutoku.sh
+        target: /tmp/shutoku.sh
+      - type: bind
+        source: ./sng_freepbx_debian_install.sh
+        target: /tmp/sng_freepbx_debian_install.sh
+    network_mode: service:freepbx_tailscale
+
+  freepbx_tailscale:
+    image: tailscale/tailscale:v1.76.1 # tailscaleのバージョンは可変
+    hostname: freepbx1
+    init: true
+    environment:
+      - TS_AUTHKEY
+      - TS_EXTRA_ARGS
+    ports:
+      - "5060:5060"  # SIPポート
+      - "5160:5160"  # SIPポート（TLS）
+      - "8001:8001"  # UCP WebSocketポート
+      - "8003:8003"  # UCP WebSocketポート（SSL）
+      - "8088:8088"  # Asterisk HTTP接続
+      - "8089:8089"  # Asterisk HTTPS接続
+    volumes:
+      - type: volume
+        source: tailscale
+        target: /var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - net_admin
+      - sys_module
+    restart: unless-stopped
+
+
+volumes:
+  tailscale:
+

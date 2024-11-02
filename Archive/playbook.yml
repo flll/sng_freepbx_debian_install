@@ -1,0 +1,52 @@
+---
+- hosts: all
+  become: yes
+  tasks:
+    - name: FreePBXリポジトリの優先度設定
+      copy:
+        dest: /etc/apt/preferences.d/99sangoma-fpbx-repository
+        content: |
+          Package: *
+          Pin: origin deb.freepbx.org
+          Pin-Priority: 600
+
+    - name: 基本パッケージのインストール
+      apt:
+        name: 
+          - software-properties-common=0.99.30-4.1~deb12u1
+          - wget=1.21.3-1+b2
+        state: present
+        update_cache: yes
+
+    - name: 古いGPGキーの削除
+      command: apt-key del "9641 7C6E 0423 6E0A 986B  69EF DE82 7447 3C8D 0E52"
+      ignore_errors: yes
+
+    - name: FreePBXリポジトリの追加
+      apt_repository:
+        repo: "deb [ arch=amd64 ] http://deb.freepbx.org/freepbx17-dev bookworm main"
+        state: present
+
+    - name: FreePBX GPGキーの追加
+      shell: |
+        wget -O - http://deb.freepbx.org/gpg/aptly-pubkey.asc | gpg --dearmor --yes -o /etc/apt/trusted.gpg.d/freepbx.gpg
+
+    - name: パッケージリストの読み込み
+      slurp:
+        src: /tmp/apt_package.list
+      register: package_list
+
+    - name: FreePBXパッケージのインストール
+      apt:
+        name: "{{ package_list.content | b64decode | split('\n') | select('match', '^[^#]') | list }}"
+        state: present
+        dpkg_options: 'force-confnew,force-overwrite'
+        update_cache: yes
+
+    - name: インストールスクリプトの実行権限設定
+      file:
+        path: /tmp/sng_freepbx_debian_install.sh
+        mode: '0700'
+
+    - name: FreePBXインストールスクリプトの実行
+      command: bash /tmp/sng_freepbx_debian_install.sh --skipversion --testing --nochrony
